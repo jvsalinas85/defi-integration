@@ -63,6 +63,7 @@ contract PriceOracle is Ownable {
     error PriceOracle__StalePrice();
     error PriceOracle__PriceDeviationTooHigh();
     error PriceOracle_InvalidPrice();
+    error PriceOracle_FeedNotFound();
 
     // Constructor: inicializa el contrato y asigna el owner.
     constructor() Ownable(msg.sender) {}
@@ -75,7 +76,8 @@ contract PriceOracle is Ownable {
         _;
     }
 
-    // Permite al owner registrar un feed de Chainlink y un par de Uniswap para un activo.
+    // Allows the owner to register a Chainlink feed and a Uniswap pair for a given asset.
+    // This function maps the asset address to its corresponding Chainlink price feed and Uniswap pair.
     function addPriceFeed(
         address asset,
         address chainlinkFeed,
@@ -83,5 +85,55 @@ contract PriceOracle is Ownable {
     ) external onlyOwner {
         chainlinkFeeds[asset] = AggregatorV3Interface(chainlinkFeed);
         uniswapPairs[asset] = uniswapPair;
+    }
+
+    // Returns the latest price for a given asset using its Chainlink feed.
+    // Performs checks to ensure the price is not stale and is positive.
+    // Reverts if the feed is not found, the price is stale, or invalid.
+    function getPrice(
+        address asset
+    ) external view whenNotPaused returns (uint256) {
+        AggregatorV3Interface chainlinkFeed = chainlinkFeeds[asset];
+        if (address(chainlinkFeed) == address(0)) {
+            revert PriceOracle_FeedNotFound();
+        }
+
+        (, int256 chainlinkPrice, , uint256 updatedAt, ) = chainlinkFeed
+            .latestRoundData();
+
+        // Check if the price is not stale (older than 1 hour)
+        if (block.timestamp - updatedAt > STALENESS_THRESHOLD) {
+            revert PriceOracle__StalePrice();
+        }
+
+        // Check if the price is positive
+        if (chainlinkPrice <= 0) {
+            revert PriceOracle_InvalidPrice();
+        }
+
+        // Convert price to uint256 and return
+        uint256 price = uint256(chainlinkPrice);
+
+        return price;
+    }
+
+    // Allows the owner to pause or unpause the oracle.
+    // When paused, price queries are disabled.
+    function setPaused(bool _paused) external onlyOwner {
+        paused = _paused;
+    }
+
+    // Internal function to validate the deviation between two prices.
+    // Reverts if the deviation exceeds the maximum allowed threshold.
+    function _validatePriceDeviation(
+        uint256 price1,
+        uint256 price2
+    ) internal pure {
+        uint256 deviation = price1 > price2
+            ? ((price1 - price2) * 10000) / price2
+            : ((price2 - price1) * 10000) / price1;
+        if (deviation > MAX_PRICE_DEVIATION) {
+            revert PriceOracle__PriceDeviationTooHigh();
+        }
     }
 }

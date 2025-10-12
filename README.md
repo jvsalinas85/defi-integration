@@ -1,51 +1,69 @@
+## DeFi Integration - Price Oracle
+
+Este proyecto es una simulación de un entorno DeFi utilizando [Foundry](https://book.getfoundry.sh/) como framework de desarrollo y pruebas para contratos inteligentes en Ethereum.
+
+### ¿Qué incluye este proyecto?
+
+- **Oráculo de Precios (PriceOracle):**  
+  Un contrato inteligente que permite consultar precios de activos utilizando feeds de Chainlink y pares de Uniswap. El oráculo está diseñado para ser seguro, pausable y controlado por el owner, permitiendo la integración de diferentes fuentes de precios y validaciones de desviación y obsolescencia.
+
+- **Simulación DeFi:**  
+  Próximamente se incluirán contratos mock para simular la interacción de protocolos DeFi con el oráculo de precios, facilitando el desarrollo y pruebas de estrategias, préstamos, colaterales, etc.
+
+### Objetivo
+
+El objetivo es proporcionar una base sólida para experimentar y aprender sobre la integración de oráculos de precios en aplicaciones DeFi, así como probar la robustez y seguridad de estos mecanismos en un entorno controlado.
+
+---
+
 ## Foundry
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+**Foundry es un toolkit rápido, portable y modular para el desarrollo de aplicaciones Ethereum escrito en Rust.**
 
-Foundry consists of:
+Incluye:
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+- **Forge**: Framework de testing para Ethereum.
+- **Cast**: Herramienta para interactuar con contratos inteligentes EVM.
+- **Anvil**: Nodo local de Ethereum.
+- **Chisel**: REPL de Solidity.
 
-## Documentation
+## Documentación
 
 https://book.getfoundry.sh/
 
-## Usage
+## Uso
 
-### Build
+### Compilar
 
 ```shell
 $ forge build
 ```
 
-### Test
+### Testear
 
 ```shell
 $ forge test
 ```
 
-### Format
+### Formatear
 
 ```shell
 $ forge fmt
 ```
 
-### Gas Snapshots
+### Snapshots de Gas
 
 ```shell
 $ forge snapshot
 ```
 
-### Anvil
+### Nodo local (Anvil)
 
 ```shell
 $ anvil
 ```
 
-### Deploy
+### Desplegar
 
 ```shell
 $ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
@@ -57,7 +75,7 @@ $ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --pri
 $ cast <subcommand>
 ```
 
-### Help
+### Ayuda
 
 ```shell
 $ forge --help
